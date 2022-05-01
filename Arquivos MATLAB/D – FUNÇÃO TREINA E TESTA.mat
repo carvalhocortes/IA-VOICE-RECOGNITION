@@ -1,0 +1,31 @@
+function erro=treinatesta(X,Y,numarq)
+    AUX = 1; %Inicia a variavel auxiliar para montar o vetor erro
+    for n=5:5:25
+        for N=500:1000:3500
+            for i=1:10
+                [xtr,ytr,xts,yts]=gera_dados(X,Y);
+                [A,B,VetErro]=treinamento(xtr,ytr,[],[],n,N); %Treina a rede
+                yRtr=perceptrons(xtr,A,B); %Testa a rede
+                [xx,ytrc]=max(ytr,[],2);
+                [xx,yRtrc]=max(yRtr,[],2);
+                ErroTreina(i)=sum(yRtrc~=ytrc)/size(yRtrc,1); %Marca o minimo erro do teste
+                yRts=perceptrons(xts,A,B); %Testa a rede
+                [xx,ytsc]=max(yts,[],2);
+                [xx,yRtsc]=max(yRts,[],2);
+                ErroTesta(i)=sum(yRtsc~=ytsc)/size(yRtsc,1); %Marca o minimo erro do teste
+            end
+        mtre = sum (ErroTreina)/10; %Define media do treinamento
+        dtre = sqrt(sum((ErroTreina-mtre).^2)/(9)); %Define desvio do treinamento
+        mtes = sum (ErroTesta)/10; %Define media do teste
+        dtes = sqrt(sum((ErroTesta-mtes).^2)/(9)); %Define desvio do teste
+        erro(AUX,1) = n; %Salva na matriz de erros
+        erro(AUX,2) = N; %Salva na matriz de erros
+        erro(AUX,3) = mtre; %Salva na matriz de erros
+        erro(AUX,4) = dtre; %Salva na matriz de erros
+        erro(AUX,5) = mtes; %Salva na matriz de erros
+        erro(AUX,6) = dtes; %Salva na matriz de erros
+        AUX = AUX+1;
+        end
+    end
+    erro=[erro(:,1:2) erro(:,3:6)];
+    save (strcat('Arq',num2str(numarq)),'erro')

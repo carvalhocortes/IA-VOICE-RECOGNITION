@@ -1,0 +1,20 @@
+Quanto=0.1; %Percentual do silencio (Comum aos 2)
+Treinamento1='E:\TGI\Palavras\Originais\'; %Origem
+Treinamento2='E:\TGI\Palavras\filtrados\'; %Destino
+for Loc=1:10
+    for Cor=1:8
+        for Palavra=1:7
+            table1=[Treinamento1 'Locutor' 48+Loc '\cor' 48+Cor ' (' 48+Palavra ').wav']; %Cria nome da cor + numero
+            table2=[Treinamento2 'Locutor' 48+Loc '\cor' 48+Cor ' (' 48+Palavra ').wav']; %Cria nome da cor + numero
+            [y,fs]=readwav(table1, 's'); %abre aquivo e normaliza
+            if fs==44100
+                y=y(1:4:end);
+                fs=11025;
+            end
+        end
+        y=filtropassafaixa(y,fs); %Corta frequencias que nao sao voz
+        y=cortasilencio(y, Quanto); %Tira silencio do inicio e do fim do sinal
+        y=[zeros(round((tempo-length(y))/2),1);y;zeros(ceil((tempo-length(y))/2),1)]; %Coloca todos com o mesmo tempo
+        fidx=writewav(y,fs,table2,'s'); % salva e normaliza
+    end
+end

@@ -1,0 +1,18 @@
+% voz - sinal de voz
+% fs - frequencia de amostragem
+% td - tempo de duraçao
+% ts - tempo de sobreposiçao
+% x - matriz com cada frame
+function x=janela(voz,fs,td,ts)
+    %voz
+    Nd=round(fs*td);
+    Ns=round(fs*ts);
+    N=length(voz);
+    Nframe=ceil((N-Ns)/(Nd-Ns));
+    for i=1:Nframe,
+        if (Nd*i-Ns*(i-1))<=N
+            x(:,i)=voz(1+(Nd-Ns)*(i-1):Nd*i-Ns*(i-1));
+        else
+            x(:,i)=[voz(1+(Nd-Ns)*(i-1):end);zeros(Nd*i-Ns*(i-1)-N,1)];
+        end
+    end

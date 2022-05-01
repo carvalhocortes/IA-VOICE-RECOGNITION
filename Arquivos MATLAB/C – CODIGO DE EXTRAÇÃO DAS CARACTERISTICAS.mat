@@ -1,0 +1,33 @@
+clc
+clear
+warning off
+td=20e-3; %Tempo da janela
+ts=4e-3; %Tempo de sobreposiçao entre janelas
+Caminho='E:\TGI\Palavras\filtrados\';
+%Calcula coeficientres das cores (palavras isoladas)
+    MATRIX=0;
+    Aux=1; %Variavel Auxiliar
+    for Loc=1:10
+        for Cor=1:8
+            for Palavra=1:7
+
+                Arquivo=[Caminho 'Locutor' NUM2STR(Loc) '\cor' NUM2STR(Cor) ' (' NUM2STR(Palavra)').wav']; %Cria nome da cor + numero
+                [y,fs]=readwav(Arquivo, 's'); %Abre aquivo e normaliza
+                yp=janela(y,fs,td,ts); %Cria Janelas
+
+                for k=0:size(yp,2)-1 %Coleta Valores dos Coeficientes
+                    X1(Aux,k+1)=max_rceps(yp(:,k+1)); %MAX Cesptrum
+                    [X2(Aux,((k*2)+1)) X2(Aux,((k*2)+2))]=max_xcoor(yp(:,k+1)); %MAX AutoCorrelacao e posicao
+                    X3(Aux,k+1)=max_PDS(yp(:,k+1),fs); %MAX PDS
+                    X4(Aux,k+1)=max_energia(yp(:,k+1)); %Somatoria da Energia
+                end
+                MATRIX(Aux,Cor)=1; %Cria indice
+                Aux=Aux+1;
+            end
+        end
+    end
+    MATRIX=MATRIX*2;
+    Y=MATRIX-1;
+    save COEF X1 X2 X3 X4 Y
+    clc
+    clear

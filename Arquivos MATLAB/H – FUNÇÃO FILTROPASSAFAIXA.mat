@@ -1,0 +1,3 @@
+function x=filtropassafaixa(x,fs)
+    [B,A]=butter(4,[300/fs 4500/fs],'bandpass');
+    x=filter(B,A,x);

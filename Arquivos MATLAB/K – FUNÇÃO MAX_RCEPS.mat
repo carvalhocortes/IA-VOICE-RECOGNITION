@@ -1,0 +1,9 @@
+function maxi1=max_rceps(x)
+    z=rceps(x);
+    for i=1:length(z)
+        if isnan(z(i))
+            z(i)=0;
+        end
+    end
+    maxi1=max(z);
+    

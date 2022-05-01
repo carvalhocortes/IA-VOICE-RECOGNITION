@@ -1,0 +1,9 @@
+function maxi1=max_PDS(x,fs)
+    n=length(x);
+    [P f]=psd(x,n,fs);
+    for i=1:length(P)
+        if isnan(P(i))
+            P(i)=0;
+        end
+    end
+    maxi1=max(P);

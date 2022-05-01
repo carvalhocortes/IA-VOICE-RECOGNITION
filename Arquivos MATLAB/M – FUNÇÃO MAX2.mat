@@ -1,0 +1,41 @@
+function [maxi2,posi2,nx]=max2(x)
+    maxi2=0;
+    posi2=0;
+    nx=0;
+    if sum(x)==0
+        maxi2=0;
+        posi2=1;
+        nx=(x);
+    else
+        a=x;
+        x1=1;
+        x2=2;
+        n=length(x);
+        [maxi1,posi1]=max(x);
+        limit=0.1*maxi1;
+        for i=posi1:-1:1
+            if x(i)<limit
+                x1=i;
+                break
+            end
+        end
+        for i=posi1:(n-1)
+            if x(i)<limit
+                x2=i;
+                break
+            end
+        end
+        nx=[x(1:x1(1)) x(x2(1):end)];
+        maxi2=max(nx);
+        if maxi2<maxi1*1.001 & maxi2>maxi1*0.999
+            [maxi2,posi2,nx]=max2(nx);
+        end
+        maxi2=maxi2(1);
+        for i=1:(n)
+            if a(i)==maxi2
+                posi2=i;
+                break
+            end
+        end
+        posi2=posi2(1);
+    end

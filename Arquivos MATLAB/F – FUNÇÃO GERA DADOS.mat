@@ -1,0 +1,18 @@
+function [Xtr,Ytr,Xts,Yts]=gera_dados(X,Y)
+    [Ntr,nclass]=size(Y);
+    perc=0.7;
+    Itr=[];
+    Its=[];
+    for i=1:nclass
+        [ii,jj]=find(Y(:,i)==1);
+        Nc=length(ii);
+        I=randperm(Nc);
+        ii=ii(I);
+        jj=jj(I);
+        Itr=[Itr;ii(1:floor(0.7*Nc))];
+        Its=[Its;ii(floor(0.7*Nc)+1:end)];
+    end
+    Xtr=X(Itr,:);
+    Ytr=Y(Itr,:);
+    Xts=X(Its,:);
+    Yts=Y(Its,:);

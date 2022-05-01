@@ -1,0 +1,66 @@
+%**************************************************************
+% Este programa realiza o treinamento de uma rede perceptrons
+% com uma camada intermediaria
+% Metodo do gradiente
+% Treinamento em batelada
+% Data: 22/06/99
+% Autor: Clodoaldo Aparecido de Moraes Lima
+% Alterado em 20/05/2008
+%****************************************************************
+
+function [A,B,veterro_tr]=treinamento(X,S,A,B,h,nepocasmax)
+    % Calcula o numero de entradas e Ss
+        [N,ne]=size(X);
+        [N,ns]=size(S);
+        if isempty(A)&isempty(B)
+            %disp('Inicializando a rede neural')
+            A=rands(h,ne+1)/50;
+            B=rands(ns,h+1)/50;
+        end
+    alfa=1;% Define a taxa de aprendizado
+    erromin=1e-5;%Define o erro minimo
+    %nepocasmax=250;% Define o numer de epocas máximo
+    Sr=perceptrons(X,A,B);% Calcula a S da rede
+    erro=Sr-S;% Calcula o vetor com os erros
+    % Calcula o Erro quadratico medio
+        EQM=(1/N)*sum(sum(erro.*erro));
+        veterro_tr=[];
+        veterro_tr=[veterro_tr,EQM];
+        nepocas=0;
+        while EQM>erromin & nepocas <nepocasmax
+            nepocas=nepocas+1;% Incrementa o numero de epocas
+            [dJdA,dJdB]=grad(X,A,B,S,h);% Calcula o Gradiente
+            % Transforma para vetor
+                vetdJdA=reshape(dJdA,1,h*(ne+1))';
+                vetdJdB=reshape(dJdB,1,ns*(h+1))';
+            g=[vetdJdA;vetdJdB];% Monta o vetor gradiente
+            g=g/norm(g);% Normaliza o vetor gradiente
+            % Transforma em vetor
+                vetdJdA=g(1:h*(ne+1));
+                vetdJdB=g(h*(ne+1)+1:end);
+            % Transforma em matriz
+                dJdA=reshape(vetdJdA',h,ne+1);
+                dJdB=reshape(vetdJdB',ns,h+1);
+            % Atualiza a matriz A e B
+                Aatual=A-alfa*dJdA;
+                Batual=B-alfa*dJdB;
+            Sr=perceptrons(X,Aatual,Batual);% Calcula a S da rede
+            erro=Sr-S;% Calcula o vetor com os erros
+            % Calcula o Erro quadratico medio
+                EQMatual=(1/N)*sum(sum(erro.*erro));
+                while EQMatual>EQM
+                alfa=alfa/2;
+            % Atualiza a matriz A e B
+                Aatual=A-alfa*dJdA;
+                Batual=B-alfa*dJdB;
+            Sr=perceptrons(X,Aatual,Batual);% Calcula a S da rede
+            erro=Sr-S;% Calcula o vetor com os erros
+            EQMatual=(1/N)*sum(sum(erro.*erro));% Calcula o Erro quadratico medio
+        end
+    alfa=alfa*2;% Incrementa a taxa de aprendizagem
+    % Atualiza as matrizes de entrada e S
+        A=Aatual;
+        B=Batual;
+        EQM=EQMatual;
+        veterro_tr=[veterro_tr,EQM];
+    end

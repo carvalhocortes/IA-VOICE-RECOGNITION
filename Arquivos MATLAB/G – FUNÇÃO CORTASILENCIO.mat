@@ -1,0 +1,50 @@
+function y=cortasilencio(x, xlim)
+    n=length(x);
+    xm=0;
+    Somax=0;
+    %define media do sinal
+    xm=mean(x);
+    %retira componente DC
+    x=x-xm;
+    %define media do sinal sem a componente DC
+    xm=mean(x);
+    %corta silencios
+    ncortei=0;
+    ncortef=0;
+    for i=1:n
+        if x(i)>=xlim
+            Somax=0;
+            ni=0;
+            xmi=0;
+            for j=i:n
+                Somax=Somax+x(j);
+                ni=ni+1;
+                xmi=Somax/ni;
+                if xmi >= abs(xm*2)
+                    if ncortei==0
+                        ncortei=j;
+                        break
+                    end
+                end
+            end
+        end
+    end
+    for i=n:-1:ncortei
+        if x(i)>=xlim
+            Somax=0;
+            ni=0;
+            xmi=0;
+            for j=i:n
+                Somax=Somax+x(j);
+                ni=ni+1;
+                xmi=Somax/ni;
+                if xmi >= abs(xm*2)
+                    if ncortef==0
+                        ncortef=j;
+                        break
+                    end
+                end
+            end
+        end
+    end
+    y=x(ncortei:ncortef);

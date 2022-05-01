@@ -1,0 +1,9 @@
+function maxi1=max_xcoor(x)
+    N=length(x);
+    rx=xcorr(x,N,'coeff');
+    for i=1:length(rx)
+        if isnan(rx(i))
+            rx(i)=0;
+        end
+    end
+    maxi1=max2(rx);
